@@ -11,7 +11,6 @@
     "type-check": "vue-tsc --build"
   },
   "dependencies": {
-    "pinia": "^3.0.4",
     "vue": "beta",
     "vue-router": "^5.0.4"
   },
@@ -20,10 +19,17 @@
     "@types/node": "^24.12.2",
     "@vitejs/plugin-vue": "^6.0.6",
     "@vue/tsconfig": "^0.9.1",
+    "eslint": "^10.4.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-vue": "^10.9.1",
     "npm-run-all2": "^8.0.4",
+    "prettier": "^3.8.3",
+    "pug": "^3.0.4",
     "typescript": "~6.0.0",
+    "typescript-eslint": "^8.59.4",
     "vite": "^8.0.8",
     "vite-plugin-vue-devtools": "^8.1.1",
+    "vue-eslint-parser": "^10.4.0",
     "vue-tsc": "^3.2.6"
   },
   "engines": {
