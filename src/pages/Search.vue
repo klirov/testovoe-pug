@@ -3,15 +3,15 @@
   h1 Поиск айтемов
 
   filter-form(
-    v-model:query="filters.query"
-    v-model:category="filters.category"
+    v-model:query="query"
+    v-model:category="category"
   )
 
   items-list(
     :items="items"
     :is-loading="isLoading"
     :total-pages="totalPages"
-    v-model:page="filters.page"
+    v-model:page="page"
   )
 </template>
 
@@ -28,54 +28,51 @@ const route = useRoute();
 const router = useRouter();
 const { items, isLoading, totalPages, fetchItems } = useItems();
 
-const filters = ref<Filters>({
-  query: '',
-  category: '',
-  page: 1
-});
+const query = ref('');
+const category = ref('');
+const page = ref(1);
 
 const debouncedSearch = debounce(async () => await updateUrlAndFetch(), 500);
 
 async function updateUrlAndFetch() {
   await router.replace({
     query: {
-      query: filters.value.query || undefined,
-      category: filters.value.category || undefined,
-      page: filters.value.page > 1 ? filters.value.page : undefined
+      query: query.value || undefined,
+      category: category.value || undefined,
+      page: page.value > 1 ? page.value : undefined
     }
   });
 
-  fetchItems(filters.value);
+  fetchItems({
+    query: query.value,
+    category: category.value,
+    page: page.value
+  });
 }
 
 onMounted(() => {
-  filters.value.query = (route.query.query as string) || '';
-  filters.value.category = (route.query.category as string) || '';
-  filters.value.page = Number(route.query.page) || 1;
+  query.value = (route.query.query as string) || '';
+  category.value = (route.query.category as string) || '';
+  page.value = Number(route.query.page) || 1;
 
-  fetchItems(filters.value);
+  fetchItems({
+    query: query.value,
+    category: category.value,
+    page: page.value
+  });
 });
 
-watch(
-  filters,
-  (newFilters, oldFilters) => {
-    if (
-      newFilters.query !== oldFilters.query ||
-      newFilters.category !== oldFilters.category
-    ) {
-      filters.value.page = 1;
-
-      if (newFilters.query !== oldFilters.query) {
-        debouncedSearch();
-      } else {
-        updateUrlAndFetch();
-      }
-      return;
-    }
-    updateUrlAndFetch();
-  },
-  { deep: true }
-);
+watch(query, () => {
+  page.value = 1;
+  debouncedSearch();
+});
+watch(category, () => {
+  page.value = 1;
+  updateUrlAndFetch();
+});
+watch(page, () => {
+  updateUrlAndFetch();
+});
 </script>
 
 <style scoped></style>
