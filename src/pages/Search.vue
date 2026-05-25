@@ -74,7 +74,7 @@ watch(
 
 watch(
   filters,
-  async () => (isQueryChanging ? debouncedSearch() : updateUrlAndFetch()),
+  async () => (isQueryChanging.value ? debouncedSearch() : updateUrlAndFetch()),
   {
     deep: true,
   },
