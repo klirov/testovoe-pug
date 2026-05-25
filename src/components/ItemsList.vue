@@ -1,7 +1,7 @@
 <template lang="pug">
 .items-container
-  .loading(v-if="isLoading") Загрузка данных...
-  .empty(v-else-if="!items.length") Ничего не найдено
+  h2.loading(v-if="isLoading") Загрузка данных...
+  h2.empty(v-else-if="!items.length") Ничего не найдено
 
   template(v-else)
     ul.items-list 
@@ -10,7 +10,7 @@
         span.title {{item.title}}
         span.category {{item.category}}
 
-  .pagination(v-if="items.length")
+  .pagination(v-if="items.length > 1 && !isLoading")
     button(
       :disabled="page <= 1"
       @click="page--"
