@@ -31,23 +31,18 @@ const { items, isLoading, totalPages, fetchItems } = useItems();
 const filters = ref<Filters>({
   query: '',
   category: '',
-  page: 1,
+  page: 1
 });
 
-const isQueryChanging = ref(false);
-
-const debouncedSearch = debounce(async () => {
-  await updateUrlAndFetch();
-  isQueryChanging.value = false;
-}, 500);
+const debouncedSearch = debounce(async () => await updateUrlAndFetch(), 500);
 
 async function updateUrlAndFetch() {
   await router.replace({
     query: {
       query: filters.value.query || undefined,
       category: filters.value.category || undefined,
-      page: filters.value.page > 1 ? filters.value.page : undefined,
-    },
+      page: filters.value.page > 1 ? filters.value.page : undefined
+    }
   });
 
   fetchItems(filters.value);
@@ -62,22 +57,24 @@ onMounted(() => {
 });
 
 watch(
-  [() => filters.value.query, () => filters.value.category],
-  (newValues, oldValues) => {
-    filters.value.page = 1;
-
-    if (newValues[0] !== oldValues[0]) {
-      isQueryChanging.value = true;
-    }
-  },
-);
-
-watch(
   filters,
-  async () => (isQueryChanging.value ? debouncedSearch() : updateUrlAndFetch()),
-  {
-    deep: true,
+  (newFilters, oldFilters) => {
+    if (
+      newFilters.query !== oldFilters.query ||
+      newFilters.category !== oldFilters.category
+    ) {
+      filters.value.page = 1;
+
+      if (newFilters.query !== oldFilters.query) {
+        debouncedSearch();
+      } else {
+        updateUrlAndFetch();
+      }
+      return;
+    }
+    updateUrlAndFetch();
   },
+  { deep: true }
 );
 </script>
 
