@@ -1,14 +1,20 @@
-export function debounce<T extends (...args: any[]) => void>(
-  fn: T,
-  delay = 1000,
+export function debounce<T extends unknown[]>(
+  fn: (...args: T) => void | Promise<void>,
+  delay = 1000
 ) {
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  return function (this: any, ...args: Parameters<T>) {
+  return function (...args: T) {
     if (timeoutId) clearTimeout(timeoutId);
 
     timeoutId = setTimeout(() => {
-      fn.apply(this, args);
+      const result = fn(...args);
+
+      if (result instanceof Promise) {
+        result.catch((err) => {
+          console.error(`Ошибка во время выполнения дебаунса: ${err}`);
+        });
+      }
     }, delay);
   };
 }
