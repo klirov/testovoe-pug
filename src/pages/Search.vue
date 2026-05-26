@@ -63,19 +63,19 @@ watch(
 );
 
 watch(query, (newValue) => {
-  if (newValue === route.query.query || '') return;
+  if (newValue === (route.query.query || '')) return;
   page.value = 1;
   debouncedUpdateUrl();
 });
 
 watch(category, (newValue) => {
-  if (newValue === route.query.category || '') return;
+  if (newValue === (route.query.category || '')) return;
   page.value = 1;
   updateUrl();
 });
 
 watch(page, (newValue) => {
-  if (newValue === Number(route.query.page) || 1) return;
+  if (newValue === (Number(route.query.page) || 1)) return;
   updateUrl();
 });
 </script>
