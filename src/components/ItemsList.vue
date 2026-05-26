@@ -10,7 +10,7 @@
         span.title {{item.title}}
         span.category {{item.category}}
 
-  .pagination(v-if="items.length > 1 && !isLoading")
+  .pagination(v-if="totalPages > 1 && !isLoading")
     button(
       :disabled="page <= 1"
       @click="page--"
