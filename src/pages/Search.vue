@@ -16,9 +16,9 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { type Filters, useItems } from '@/composables/useItems';
+import { useItems } from '@/composables/useItems';
 import { debounce } from '@/utils/debounce';
 
 import FilterForm from '@/components/FilterForm.vue';
@@ -32,9 +32,7 @@ const query = ref('');
 const category = ref('');
 const page = ref(1);
 
-const debouncedSearch = debounce(async () => await updateUrlAndFetch(), 500);
-
-async function updateUrlAndFetch() {
+async function updateUrl() {
   await router.replace({
     query: {
       query: query.value || undefined,
@@ -42,37 +40,42 @@ async function updateUrlAndFetch() {
       page: page.value > 1 ? page.value : undefined
     }
   });
-
-  fetchItems({
-    query: query.value,
-    category: category.value,
-    page: page.value
-  });
 }
 
-onMounted(() => {
-  query.value = (route.query.query as string) || '';
-  category.value = (route.query.category as string) || '';
-  page.value = Number(route.query.page) || 1;
+const debouncedUpdateUrl = debounce(() => updateUrl(), 500);
 
-  fetchItems({
-    query: query.value,
-    category: category.value,
-    page: page.value
-  });
+watch(
+  () => route.query,
+  (newQuery) => {
+    query.value = (newQuery.query as string) || '';
+    category.value = (newQuery.category as string) || '';
+    page.value = Number(newQuery.page) || 1;
+
+    fetchItems({
+      query: query.value,
+      category: category.value,
+      page: page.value
+    });
+  },
+  {
+    immediate: true
+  }
+);
+
+watch(query, (newValue) => {
+  if (newValue === route.query.query || '') return;
+  page.value = 1;
+  debouncedUpdateUrl();
 });
 
-watch(query, () => {
+watch(category, (newValue) => {
+  if (newValue === route.query.category || '') return;
   page.value = 1;
-  debouncedSearch();
+  updateUrl();
 });
-watch(category, () => {
-  page.value = 1;
-  updateUrlAndFetch();
-});
-watch(page, () => {
-  updateUrlAndFetch();
+
+watch(page, (newValue) => {
+  if (newValue === Number(route.query.page) || 1) return;
+  updateUrl();
 });
 </script>
-
-<style scoped></style>
