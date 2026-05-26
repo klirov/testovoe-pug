@@ -37,28 +37,93 @@ const page = defineModel<number>('page', { default: 1 });
 </script>
 
 <style scoped>
+.items-container {
+  min-height: 300px;
+}
+
 .items-list {
   list-style: none;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
+
 .item {
   display: flex;
-  gap: 1rem;
-  padding: 0.5rem;
-  border-bottom: 1px solid #eee;
-}
-.category {
-  background-color: #f0f0f0;
-  padding: 0.1rem 0.5rem;
-  border-radius: 4px;
-}
-.pagination {
-  margin-top: 1rem;
-  display: flex;
-  gap: 1rem;
   align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  transition: transform 0.15s, box-shadow 0.15s;
 }
+
+.item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.id {
+  font-family: monospace;
+  color: #999;
+  font-weight: bold;
+}
+
+.title {
+  flex: 1;
+  font-weight: 500;
+}
+
+.category {
+  background-color: #eef2f3;
+  color: #475569;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.pagination {
+  margin-top: 2rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+button {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+button:hover:not(:disabled) {
+  border-color: #000;
+  background: #f9f9f9;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .current {
-  outline: 1px solid black;
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+.loading, .empty {
+  text-align: center;
+  color: #666;
+  margin-top: 3rem;
+  font-weight: 400;
 }
 </style>
